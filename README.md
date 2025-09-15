@@ -1,73 +1,89 @@
-# Welcome to your Lovable project
+# RouteMate AI - Student Commute Optimizer
 
-## Project info
+**Domain:** Full Stack + AI/ML  
+**Problem Statement:**  
+Students often commute individually, which is costly, time-consuming, and polluting.  
+RouteMate AI is a carpooling & route-sharing platform designed specifically for students, combining **full stack web development** with **AI-powered smart matching**.
 
-**URL**: https://lovable.dev/projects/b25f4f8f-f430-419f-9653-9fbeefe077f5
+---
 
-## How can I edit this code?
+## 🚀 Solution Overview
 
-There are several ways of editing your application.
+### Frontend (React + Tailwind + Leaflet)
+- Students enter **home & destination**.
+- Map displays their **route** + **nearby students** with anonymous usernames.
+- Clicking a student opens a **chat modal**.
 
-**Use Lovable**
+### Backend (FastAPI)
+- REST APIs for register, matches, chat.
+- Stores student trips anonymously.
+- Integrates AI module for smarter matching.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/b25f4f8f-f430-419f-9653-9fbeefe077f5) and start prompting.
+### AI Module (Python)
+- Uses **K-Means clustering** to group students by commute similarity.
+- Better than simple distance-based approach.
 
-Changes made via Lovable will be committed automatically to this repo.
+### Database
+- SQLite (hackathon-friendly) or MySQL (production).
+- Stores user_id, anonymous username, home_lat, home_lon, dest_lat, dest_lon.
 
-**Use your preferred IDE**
+### Chat Service
+- Firebase Realtime DB (quick) OR FastAPI WebSockets.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+---
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 🏗️ High-Level Architecture
 
-Follow these steps:
+![Architecture](diagrams/architecture.png)
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+---
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## 📈 Workflow
 
-# Step 3: Install the necessary dependencies.
-npm i
+1. Student registers with home + destination.  
+2. Backend assigns **unique anonymous username**.  
+3. Backend compares routes using AI clustering → suggests best matches.  
+4. Frontend displays matches on map.  
+5. Student clicks → opens chat.  
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+![Workflow](diagrams/workflow.png)
+
+---
+
+## 🧑‍💻 Pseudo Code
+
+### Route Matching (Distance-based)
+```pseudo
+function find_matches(home, dest, radius_km):
+    matches = []
+    for student in database:
+        dh = haversine(home, student.home)
+        dd = haversine(dest, student.dest)
+        if dh <= radius_km AND dd <= radius_km:
+            matches.add(student)
+    return matches
 ```
 
-**Edit a file directly in GitHub**
+### AI Route Clustering
+```pseudo
+function cluster_routes(student_routes, K):
+    # student_routes = [home_lat, home_lon, dest_lat, dest_lon]
+    model = KMeans(n_clusters=K)
+    model.fit(student_routes)
+    labels = model.predict(student_routes)
+    return groups of students by labels
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+---
 
-**Use GitHub Codespaces**
+## ⚖️ Trade-offs
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/b25f4f8f-f430-419f-9653-9fbeefe077f5) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- **Matching**
+  - Distance formula → simple, fast.
+  - AI clustering → smarter, accurate, but slightly heavier.
+- **Database**
+  - SQLite → fast setup, good for demo.
+  - MySQL → scalable, production-ready.
+- **Chat**
+  - Firebase → quick setup, reliable.
+  - WebSocket → full control, more setup time.
